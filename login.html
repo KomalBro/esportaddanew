@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esport Adda - Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        .auth-box {
+            padding: 2rem;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .error-message {
+            color: #f44336;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .action-button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .action-button:hover {
+            background-color: #45a049;
+        }
+        .auth-links {
+            margin-top: 1rem;
+        }
+        .auth-links a {
+            text-decoration: none;
+            color: #4CAF50;
+        }
+    </style>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <h1 id="title">Welcome to Esport Adda</h1>
+            <div class="auth-box">
+                <div id="loginSection">
+                    <h2>Login</h2>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">Email</label>
+                            <input type="email" id="loginEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" required>
+                        </div>
+                        <div id="loginErrorMessage" class="error-message" style="display: none;"></div>
+                        <button type="submit" class="action-button">Login</button>
+                    </form>
+                    <div class="auth-links">
+                        <p>Don't have an account? <a href="#" onclick="toggleForm('register')">Register</a></p>
+                    </div>
+                </div>
+
+                <div id="registerSection" style="display: none;">
+                    <h2>Register</h2>
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="registerEmail">Email</label>
+                            <input type="email" id="registerEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword">Password</label>
+                            <input type="password" id="registerPassword" required>
+                        </div>
+                        <div id="registerErrorMessage" class="error-message" style="display: none;"></div>
+                        <button type="submit" class="action-button">Register</button>
+                    </form>
+                    <div class="auth-links">
+                        <p>Already have an account? <a href="#" onclick="toggleForm('login')">Login</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWXpfQuAB06Ebqms6_TpE_p31CtyfPv1c",
+            authDomain: "esports-adda-1f4ca.firebaseapp.com",
+            projectId: "esports-adda-1f4ca",
+            storageBucket: "esports-adda-1f4ca.appspot.com",
+            messagingSenderId: "1016111341367",
+            appId: "1:1016111341367:web:165be8fd6210b0c49104b2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // Constants
+        const ADMIN_EMAIL = 'admin@esportadda.com';
+
+        // Get login type from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const loginType = urlParams.get('type') || 'user';
+
+        // Update page title based on login type
+        document.querySelector('h1').textContent = loginType === 'admin' ? 'Admin Login' : 'User Login';
+
+        // Hide registration for admin login
+        if (loginType === 'admin') {
+            document.querySelector('.auth-links').style.display = 'none';
+        }
+
+        // Check if user is already logged in
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                if (loginType === 'admin') {
+                    if (user.email === ADMIN_EMAIL) {
+                        window.location.href = 'admin.html';
+                    } else {
+                        auth.signOut(); // Sign out non-admin trying to access admin
+                    }
+                } else {
+                    if (user.email !== ADMIN_EMAIL) {
+                        window.location.href = 'index.html';
+                    } else {
+                        auth.signOut(); // Sign out admin trying to access user app
+                    }
+                }
+            }
+        });
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorElement = document.getElementById('loginErrorMessage');
+            
+            try {
+                errorElement.style.display = 'none';
+
+                // Validate login type
+                if (loginType === 'admin' && email !== ADMIN_EMAIL) {
+                    throw new Error('Invalid admin credentials');
+                }
+                if (loginType === 'user' && email === ADMIN_EMAIL) {
+                    throw new Error('Please use admin login page');
+                }
+
+                await auth.signInWithEmailAndPassword(email, password);
+                // Redirection will be handled by onAuthStateChanged
+            } catch (error) {
+                errorElement.textContent = error.message;
+                errorElement.style.display = 'block';
+            }
+        });
+
+        // Handle registration form submission (only for users)
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const errorElement = document.getElementById('registerErrorMessage');
+            
+            try {
+                errorElement.style.display = 'none';
+
+                // Don't allow admin registration
+                if (email === ADMIN_EMAIL) {
+                    throw new Error('This email is reserved for admin use');
+                }
+
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                
+                // Get platform settings for joining bonus
+                const settingsDoc = await db.collection('settings').doc('platform').get();
+                const settings = settingsDoc.data() || { joiningBonus: 0 };
+                
+                // Create user document in Firestore
+                await db.collection('users').doc(userCredential.user.uid).set({
+                    balance: settings.joiningBonus,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    email: email,
+                    gamesPlayed: 0,
+                    joinmoney: settings.joiningBonus,
+                    name: "",
+                    phone: "",
+                    referralCode: "",
+                    referralEarnings: 0,
+                    referredBy: "",
+                    totalWinnings: 0,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    username: ""
+                });
+
+                // Redirection will be handled by onAuthStateChanged
+            } catch (error) {
+                errorElement.textContent = error.message;
+                errorElement.style.display = 'block';
+            }
+        });
+
+        // Toggle between login and registration forms (only for user login)
+        function toggleForm(formType) {
+            if (loginType === 'admin') return;
+            
+            const loginSection = document.getElementById('loginSection');
+            const registerSection = document.getElementById('registerSection');
+            
+            if (formType === 'register') {
+                loginSection.style.display = 'none';
+                registerSection.style.display = 'block';
+            } else {
+                loginSection.style.display = 'block';
+                registerSection.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
