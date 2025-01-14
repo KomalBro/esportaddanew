@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Esport Adda</title>
+    <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>EsportAdda Admin</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('dashboard')">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('games')">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Games</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('tournaments')">
+                        <i class="fas fa-trophy"></i>
+                        <span>Tournaments</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('users')">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('transactions')">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Transactions</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('withdrawals')">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Withdrawals</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('settings')">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="handleLogout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section">
+                <div class="dashboard-header">
+                    <h2>Dashboard Overview</h2>
+                    <div class="date-filter">
+                        <i class="fas fa-calendar"></i>
+                        <span>Today</span>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card users">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Total Users</h3>
+                            <p id="totalUsers">0</p>
+                            <span class="trend positive">
+                                <i class="fas fa-arrow-up"></i> 12%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card games">
+                        <div class="stat-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Active Games</h3>
+                            <p id="activeGames">0</p>
+                            <span class="trend positive">
+                                <i class="fas fa-arrow-up"></i> 5%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card tournaments">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Active Tournaments</h3>
+                            <p id="activeTournaments">0</p>
+                            <span class="trend positive">
+                                <i class="fas fa-arrow-up"></i> 8%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card revenue">
+                        <div class="stat-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Total Revenue</h3>
+                            <p id="totalRevenue">₹0</p>
+                            <span class="trend positive">
+                                <i class="fas fa-arrow-up"></i> 15%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card withdrawals">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Pending Withdrawals</h3>
+                            <p id="pendingWithdrawals">₹0</p>
+                            <span class="trend neutral">
+                                <i class="fas fa-minus"></i> 0%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card activities">
+                        <div class="card-header">
+                            <h3><i class="fas fa-history"></i> Recent Activities</h3>
+                            <button class="view-all">View All</button>
+                        </div>
+                        <ul id="recentActivities" class="activities-list">
+                            <!-- Activities will be loaded here -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Games Section -->
+            <section id="games" class="section" style="display: none;">
+                <div class="section-header">
+                    <h2>Games Management</h2>
+                    <button class="action-btn add-btn" onclick="showModal('addGameModal')">
+                        <i class="fas fa-plus"></i> Add Game
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Game</th>
+                                <th>Description</th>
+                                <th>Created Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gamesList"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Tournaments Section -->
+            <section id="tournaments" class="section" style="display: none;">
+                <div class="section-header">
+                    <h2>Tournaments Management</h2>
+                    <button class="action-btn add-btn" onclick="showModal('addTournamentModal')">
+                        <i class="fas fa-plus"></i> Add Tournament
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tournament</th>
+                                <th>Entry Fee</th>
+                                <th>Prize Pool</th>
+                                <th>Players</th>
+                                <th>Start Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tournamentsList"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="section" style="display: none;">
+                <div class="section-header">
+                    <h2>Users Management</h2>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Balance</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Withdrawals Section -->
+            <section id="withdrawals" class="section" style="display: none;">
+                <div class="section-header">
+                    <h2>Withdrawals Management</h2>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="withdrawalsTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="section" style="display: none;">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                </div>
+                <div class="settings-form">
+                    <form id="settingsForm" onsubmit="return saveSettings(event)">
+                        <div class="form-group">
+                            <label for="platformName">Platform Name</label>
+                            <input type="text" id="platformName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appVersion">App Version</label>
+                            <input type="text" id="appVersion" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">Contact Email</label>
+                            <input type="email" id="contactEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="supportPhone">Support Phone</label>
+                            <input type="tel" id="supportPhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="platformFee">Platform Fee (%)</label>
+                            <input type="number" id="platformFee" min="0" max="100" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="minWithdrawal">Minimum Withdrawal Amount (₹)</label>
+                            <input type="number" id="minWithdrawal" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="maxWithdrawal">Maximum Withdrawal Amount (₹)</label>
+                            <input type="number" id="maxWithdrawal" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="joiningBonus">Joining Bonus (₹)</label>
+                            <input type="number" id="joiningBonus" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="referralReward">Referral Reward (₹)</label>
+                            <input type="number" id="referralReward" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="minPlayers">Minimum Players</label>
+                            <input type="number" id="minPlayers" min="2" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="maxPlayers">Maximum Players</label>
+                            <input type="number" id="maxPlayers" min="2" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registrationBuffer">Registration Buffer (minutes)</label>
+                            <input type="number" id="registrationBuffer" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="resultSubmissionWindow">Result Submission Window (minutes)</label>
+                            <input type="number" id="resultSubmissionWindow" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="maintenanceMode">Maintenance Mode</label>
+                            <input type="checkbox" id="maintenanceMode">
+                        </div>
+                        <div class="form-group">
+                            <label for="maintenanceMessage">Maintenance Message</label>
+                            <textarea id="maintenanceMessage" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="forceUpdate">Force Update</label>
+                            <input type="checkbox" id="forceUpdate">
+                        </div>
+                        <div class="form-group">
+                            <label>Social Links</label>
+                            <div class="social-links">
+                                <input type="url" id="discord" placeholder="Discord Link">
+                                <input type="url" id="telegram" placeholder="Telegram Link">
+                                <input type="url" id="whatsapp" placeholder="WhatsApp Link">
+                            </div>
+                        </div>
+                        <button type="submit" class="action-btn save-btn">Save Settings</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Add Game Modal -->
+            <div id="addGameModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Add New Game</h2>
+                        <span class="close" onclick="closeModal('addGameModal')">&times;</span>
+                    </div>
+                    <form id="addGameForm" class="settings-form">
+                        <div class="form-group">
+                            <label for="gameName">Game Name</label>
+                            <input type="text" id="gameName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gameDescription">Description</label>
+                            <textarea id="gameDescription" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="gameImage">Image URL</label>
+                            <input type="url" id="gameImage" required>
+                        </div>
+                        <button type="button" onclick="addGame()" class="action-btn add-btn">Add Game</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Add Tournament Modal -->
+            <div id="addTournamentModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Add New Tournament</h2>
+                        <span class="close" onclick="closeModal('addTournamentModal')">&times;</span>
+                    </div>
+                    <form id="addTournamentForm" class="settings-form">
+                        <div class="form-group">
+                            <label for="tournamentName">Tournament Name</label>
+                            <input type="text" id="tournamentName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gameSelect">Select Game</label>
+                            <select id="gameSelect" required>
+                                <!-- Games will be loaded here -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="entryFee">Entry Fee (₹)</label>
+                            <input type="number" id="entryFee" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prizePool">Prize Pool (₹)</label>
+                            <input type="number" id="prizePool" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="maxPlayers">Maximum Players</label>
+                            <input type="number" id="maxPlayers" min="2" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="startDate">Start Date</label>
+                            <input type="datetime-local" id="startDate" required>
+                        </div>
+                        <button type="button" onclick="addTournament()" class="action-btn add-btn">Add Tournament</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
